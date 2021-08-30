@@ -7,6 +7,8 @@ import socketserver
 
 postgresql_connection = "Fill this with your connection details"
 
+postgresql_user = "Add a username"
+
 initialize_shortener_sequence = [
     """
 CREATE SEQUENCE public.shortener_short_id_seq
@@ -16,9 +18,9 @@ CREATE SEQUENCE public.shortener_short_id_seq
     MAXVALUE 9223372036854775807
     CACHE 1;
     """,
-    """
+    f"""
 ALTER SEQUENCE public.shortener_short_id_seq
-    OWNER TO gel;
+    OWNER TO {postgresql_user};
     """,
 ]  # Sequences for days
 
@@ -30,8 +32,8 @@ initialize_shortener_table = [
     CONSTRAINT shortener_pkey PRIMARY KEY (id_code, url)
 )
 TABLESPACE pg_default""",
-    """ALTER TABLE public.shortener
-    OWNER to gel""",
+    f"""ALTER TABLE public.shortener
+    OWNER to {postgresql_user}""",
     """
 ALTER TABLE public.shortener
     ADD CONSTRAINT url_uniqueness UNIQUE (url);

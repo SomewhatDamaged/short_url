@@ -1,5 +1,4 @@
 import sys
-import random
 import asyncpg
 import asyncio
 import http.server
@@ -40,8 +39,6 @@ ALTER TABLE public.shortener
     """,
 ]  # Tables for days
 
-
-random.seed()
 
 """Absolutely and without a doubt DO NOT RUN THIS WHERE PEOPLE CAN CONNECT TO IT DIRECTLY
 

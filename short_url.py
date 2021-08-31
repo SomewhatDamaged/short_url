@@ -47,7 +47,7 @@ You have been warned.
 
 
 PORT = 8000
-domain = "http://192.168.56.101:8000"  # set this to your actual domain
+domain = "http://127.0.0.1:8000"  # set this to your actual domain
 url_prefix = "s"  # configure nginx (or similar) to redirect anything with the prefix to this port
 url_form = "{domain}/{url_prefix}/{id}"
 alphabet = (
@@ -191,6 +191,26 @@ class Server(http.server.BaseHTTPRequestHandler):
             self.log_error("Something bad happened and I sent a 500!")
             self.log_error(str(e))
 
+    def do_HEAD(self):
+        try:
+            id_code = self.path.rsplit("/", 1)[1]
+            url = asyncio.get_event_loop().run_until_complete(get_url_from_db(id_code))
+            self.send_response(301)
+            self.send_header("Location", url)
+            self.end_headers()
+            self.log_request(f"Sent user to {url} from {self.path.rsplit('/', 1)[1]}")
+        except RuntimeError:
+            self.send_response(404)
+            self.end_headers()
+            self.log_request(
+                f"Sent user ({self.client_address}) a 404 from {self.path.rsplit('/', 1)[1]}"
+            )
+        except Exception as e:
+            self.send_response(500)
+            self.end_headers()
+            self.log_error("Something bad happened and I sent a 500!")
+            self.log_error(str(e))
+
 
 async def get_url_from_db(id_code: str = None):
     if id_code is None:
@@ -272,7 +292,7 @@ def encode(number: int = None):
 
 def decode(id_code: str = None):
     if id_code is None:
-        raise ValueError("Must set a value for <number>")
+        raise ValueError("Must set a value for <id_code>")
     output = 0
     base = len(alphabet)
     for character in id_code:

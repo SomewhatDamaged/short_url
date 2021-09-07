@@ -3,10 +3,13 @@ import asyncpg
 import asyncio
 import http.server
 import socketserver
+import os
 
-postgresql_connection = "Fill this with your connection details"
+postgresql_connection = os.environ["postgresql_connection"]
 
-postgresql_user = "Add a username"
+
+postgresql_user = os.environ["postgresql_username"]
+
 
 initialize_shortener_sequence = [
     """
@@ -47,8 +50,8 @@ You have been warned.
 
 
 PORT = 8000
-domain = "http://127.0.0.1:8000"  # set this to your actual domain
-url_prefix = "s"  # configure nginx (or similar) to redirect anything with the prefix to this port
+domain = os.environ["domain"]
+url_prefix = os.environ["url_prefix"]  # configure nginx (or similar) to redirect anything with the prefix to this port
 url_form = "{domain}/{url_prefix}/{id}"
 alphabet = (
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_~!$&'()*+,;=:@"
